@@ -45,6 +45,10 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Modelos de dados
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(80), nullable=False)
+    sobrenome = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    cpf_cnpj = db.Column(db.String(20), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     file_count = db.Column(db.Integer, default=0)
@@ -192,17 +196,29 @@ def register_page():
 def register():
     try:
         data = request.get_json()
-        if not data or 'username' not in data or 'password' not in data:
+        required_fields = ['nome', 'sobrenome', 'email', 'cpf_cnpj', 'username', 'password']
+        
+        if not data or not all(field in data for field in required_fields):
             return jsonify({'message': 'Dados inválidos'}), 400
 
-        username = data['username']
-        password = data['password']
-
-        if User.query.filter_by(username=username).first():
+        if User.query.filter_by(username=data['username']).first():
             return jsonify({'message': 'Usuário já existe'}), 400
+            
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'message': 'Email já cadastrado'}), 400
+            
+        if User.query.filter_by(cpf_cnpj=data['cpf_cnpj']).first():
+            return jsonify({'message': 'CPF/CNPJ já cadastrado'}), 400
 
-        hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password_hash=hashed_password)
+        hashed_password = generate_password_hash(data['password'])
+        new_user = User(
+            nome=data['nome'],
+            sobrenome=data['sobrenome'],
+            email=data['email'],
+            cpf_cnpj=data['cpf_cnpj'],
+            username=data['username'],
+            password_hash=hashed_password
+        )
         db.session.add(new_user)
         db.session.commit()
 

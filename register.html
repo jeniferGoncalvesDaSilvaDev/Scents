@@ -12,7 +12,11 @@
         <h1>Scents Ads</h1>
         <form id="register-form">
             <h2>Registro</h2>
-            <input type="text" id="username" placeholder="Nome de Usuário" required>
+            <input type="text" id="nome" placeholder="Nome" required>
+            <input type="text" id="sobrenome" placeholder="Sobrenome" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="cpf_cnpj" placeholder="CPF/CNPJ" required>
+            <input type="text" id="username" placeholder="Usuário" required>
             <input type="password" id="password" placeholder="Senha" required>
             <button type="submit">Registrar</button>
         </form>
@@ -23,8 +27,14 @@
         const registerForm = document.getElementById('register-form');
         registerForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const formData = {
+                nome: document.getElementById('nome').value,
+                sobrenome: document.getElementById('sobrenome').value,
+                email: document.getElementById('email').value,
+                cpf_cnpj: document.getElementById('cpf_cnpj').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
 
             try {
                 const response = await fetch('/register', {
@@ -32,7 +42,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify(formData)
                 });
 
                 const data = await response.json();
