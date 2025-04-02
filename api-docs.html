@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação da API</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container docs">
+        <h1>Documentação da API</h1>
+        
+        <section class="endpoint">
+            <h2>Endpoints</h2>
+            
+            <div class="endpoint-item">
+                <h3>POST /register</h3>
+                <p>Registra um novo usuário</p>
+                <pre>Body: { "username": "string", "password": "string" }</pre>
+            </div>
+
+            <div class="endpoint-item">
+                <h3>POST /login</h3>
+                <p>Autenticação do usuário</p>
+                <pre>Body: { "username": "string", "password": "string" }</pre>
+                <p>Retorno: { "token": "string" }</p>
+            </div>
+
+            <div class="endpoint-item">
+                <h3>POST /upload</h3>
+                <p>Upload de arquivos de áudio e mídia</p>
+                <pre>Headers: Authorization: token
+FormData: audio (file), media (file)</pre>
+                <p>Retorno: { "message": "string", "files": ["string"] }</p>
+            </div>
+
+            <div class="endpoint-item">
+                <h3>POST /generate_video</h3>
+                <p>Gera um vídeo a partir dos últimos arquivos enviados</p>
+                <pre>Headers: Authorization: token</pre>
+                <p>Retorno: { "message": "string", "video_url": "string" }</p>
+            </div>
+
+            <div class="endpoint-item">
+                <h3>GET /download/&lt;filename&gt;</h3>
+                <p>Download de arquivo</p>
+                <pre>Path: filename (string)</pre>
+            </div>
+
+            <div class="endpoint-item">
+                <h3>GET /list-uploads</h3>
+                <p>Lista os arquivos enviados</p>
+                <pre>Headers: Authorization: token</pre>
+                <p>Retorno: [{ "filename": "string", "uploaded_at": "string" }]</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

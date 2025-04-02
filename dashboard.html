@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scents Ads - Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        <nav class="menu">
+            <a href="/upload">Novo Upload</a>
+            <a href="/docs-page">Documentação</a>
+        </nav>
+
+        <div class="generate-video-container">
+            <h2>Gerar Vídeo</h2>
+            <p>O vídeo será gerado com os últimos arquivos enviados no upload</p>
+            <button id="generate-video-btn" class="main-button">Gerar Vídeo</button>
+            <div id="status-message"></div>
+            <div id="status-message"></div>
+        </div>
+
+        <div id="video-result" style="display: none;">
+            <h3>Vídeo Gerado</h3>
+            <video id="generated-video" controls style="max-width: 100%;"></video>
+            <a id="download-link" class="main-button" download>Baixar Vídeo</a>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+
+        document.getElementById('generate-video-btn').addEventListener('click', async () => {
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.textContent = 'Gerando vídeo...';
+            
+            try {
+                const response = await fetch('/generate_video', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    statusMessage.textContent = 'Vídeo gerado com sucesso! Iniciando download...';
+                    
+                    // Forçar download do vídeo
+                    window.location.href = result.video_url;
+                    
+                    // Mostrar o vídeo na página também
+                    const videoResult = document.getElementById('video-result');
+                    const video = document.getElementById('generated-video');
+                    const downloadLink = document.getElementById('download-link');
+                    
+                    video.src = result.video_url;
+                    downloadLink.href = result.video_url;
+                    videoResult.style.display = 'block';
+                } else {
+                    throw new Error(result.message || 'Erro ao gerar vídeo');
+                }
+            } catch (error) {
+                statusMessage.textContent = 'Erro: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

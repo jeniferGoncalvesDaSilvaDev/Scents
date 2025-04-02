@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scents Ads - Token</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Seu Token de Acesso</h1>
+        <div class="token-container">
+            <input type="text" id="token-display" readonly>
+            <button onclick="copyToken()">Copiar Token</button>
+        </div>
+        <div id="copy-status" class="copy-status"></div>
+        <nav class="menu">
+            <a href="/upload">Voltar ao Upload</a>
+        </nav>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+
+        document.getElementById('token-display').value = token;
+
+        function copyToken() {
+            const tokenInput = document.getElementById('token-display');
+            tokenInput.select();
+            document.execCommand('copy');
+
+            const status = document.getElementById('copy-status');
+            status.textContent = 'Token copiado!';
+            setTimeout(() => {
+                window.location.href = '/paste-token';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

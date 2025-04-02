@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scents Ads - Meus Uploads</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Meus Uploads</h1>
+        <nav class="menu">
+            <a href="/upload">Novo Upload</a>
+            <a href="/docs-page">Documentação</a>
+        </nav>
+
+        <div class="token-info">
+            <h3>Seu Token de Acesso:</h3>
+            <pre id="token-display"></pre>
+        </div>
+
+        <div id="uploads-list">
+            <h3>Seus Arquivos:</h3>
+            <div id="files-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+
+        // Mostrar token
+        const tokenDisplay = document.getElementById('token-display');
+        tokenDisplay.textContent = token;
+
+        // Listar arquivos da pasta uploads
+        const filesList = document.getElementById('files-list');
+        fetch('/list-uploads', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(files => {
+            if (files.length === 0) {
+                filesList.innerHTML = '<p>Nenhum arquivo enviado ainda</p>';
+            } else {
+                const fileItems = files.map(file => `
+                    <div class="file-item">
+                        <span>${file.filename}</span>
+                        <span>Upload em: ${new Date(file.uploaded_at).toLocaleString()}</span>
+                    </div>
+                `).join('');
+                filesList.innerHTML = fileItems;
+            }
+        })
+        .catch(error => {
+            filesList.innerHTML = '<p>Erro ao carregar arquivos</p>';
+        });
+    </script>
+</body>
+</html>

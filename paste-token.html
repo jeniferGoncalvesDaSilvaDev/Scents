@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scents Ads - Colar Token</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cole seu Token de Acesso</h1>
+        <div class="token-container">
+            <input type="text" id="token-input" placeholder="Cole seu token aqui">
+            <button onclick="saveToken()">Salvar Token</button>
+        </div>
+        <div id="status-message" class="copy-status"></div>
+        <nav class="menu">
+            <a href="/upload">Voltar ao Upload</a>
+        </nav>
+    </div>
+
+    <script>
+        function saveToken() {
+            const token = document.getElementById('token-input').value;
+            if (token) {
+                localStorage.setItem('token', token);
+                document.getElementById('status-message').textContent = 'Token salvo com sucesso!';
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1500);
+            } else {
+                document.getElementById('status-message').textContent = 'Por favor, insira um token';
+            }
+        }
+    </script>
+</body>
+</html>
