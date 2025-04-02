@@ -79,7 +79,14 @@ def generate_video_with_audio(image_filename, mp3_filename, output_filename):
     subprocess.run(cmd)
 
 def generate_token(user_id):
-    token = jwt.encode({'user_id': user_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)}, app.config['SECRET_KEY'], algorithm='HS256')
+    # Gera um token aleatório como parte do payload
+    random_token = os.urandom(32).hex()
+    payload = {
+        'user_id': user_id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+        'random': random_token
+    }
+    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
     return token
 
 def decode_token(token):
