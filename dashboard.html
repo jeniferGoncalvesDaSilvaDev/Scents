@@ -50,10 +50,12 @@
                 const response = await fetch('/generate_video', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({})
+                    body: JSON.stringify({
+                        aroma: 'default' // Adicione o aroma desejado aqui
+                    })
                 });
 
                 const result = await response.json();
