@@ -189,10 +189,26 @@ def register_page():
 
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.json
-    username = data['username']
-    password = data['password']
-    
+    try:
+        data = request.get_json()
+        if not data or 'username' not in data or 'password' not in data:
+            return jsonify({'message': 'Dados inválidos'}), 400
+
+        username = data['username']
+        password = data['password']
+
+        if User.query.filter_by(username=username).first():
+            return jsonify({'message': 'Usuário já existe'}), 400
+
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password_hash=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({'message': 'Usuário registrado com sucesso!'})
+    except Exception as e:
+        return jsonify({'message': f'Erro ao registrar: {str(e)}'}), 500
+
 @app.route('/upload')
 def upload_page():
     return send_from_directory('.', 'upload.html')
@@ -218,29 +234,29 @@ def api_docs():
 def generate_video_endpoint(current_user):
     # Pegar o último arquivo de imagem e áudio enviados
     files = os.listdir(app.config['UPLOAD_FOLDER'])
-    
+
     # Encontrar o último arquivo de imagem
     image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
     if not image_files:
         return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
-    
+
     # Encontrar o último arquivo de áudio
     audio_files = [f for f in files if f.lower().endswith('.mp3')]
     if not audio_files:
         return jsonify({'message': 'Nenhum áudio encontrado'}), 400
     audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_files[-1])
-    
+
     # Gerar nome único para o vídeo
     output_filename = f"video_{uuid.uuid4().hex[:8]}.mp4"
     output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
-    
+
     try:
         generate_video_with_audio(image_path, audio_path, output_path)
         new_file = GeneratedFile(filename=output_filename, user_id=current_user.id)
         db.session.add(new_file)
         db.session.commit()
-        
+
         return jsonify({
             'message': 'Vídeo gerado com sucesso',
             'video_url': f'/download/{output_filename}'
@@ -266,7 +282,7 @@ def list_uploads(current_user):
 def upload_file(current_user):
     if 'audio' not in request.files and 'media' not in request.files:
         return jsonify({'detail': 'Nenhum arquivo enviado'}), 400
-        
+
     files = []
     if 'audio' in request.files:
         audio = request.files['audio']
@@ -274,28 +290,19 @@ def upload_file(current_user):
             filename = secure_filename(audio.filename)
             audio.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             files.append(filename)
-            
+
     if 'media' in request.files:
         media = request.files['media']
         if media.filename:
             filename = secure_filename(media.filename)
             media.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             files.append(filename)
-            
+
     if not files:
         return jsonify({'detail': 'Nenhum arquivo válido enviado'}), 400
-        
+
     return jsonify({'message': 'Upload realizado com sucesso', 'files': files})
-    
-    if User.query.filter_by(username=username).first():
-        return jsonify({'message': 'Usuário já existe'}), 400
-        
-    hashed_password = generate_password_hash(password)
-    new_user = User(username=username, password_hash=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-    
-    return jsonify({'message': 'Usuário registrado com sucesso!'})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
