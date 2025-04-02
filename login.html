@@ -43,13 +43,12 @@
                 })
             })
             .then(async response => {
-                if (response.ok) {
-                    const data = await response.json();
+                const data = await response.json();
+                if (response.ok && data.token) {
                     localStorage.setItem('token', data.token);
                     window.location.href = "/upload";
                 } else {
-                    const error = await response.json();
-                    alert('Erro: ' + error.detail);
+                    alert('Erro: ' + (data.message || 'Falha no login'));
                 }
             })
             .catch(error => alert('Erro ao fazer login: ' + error));
