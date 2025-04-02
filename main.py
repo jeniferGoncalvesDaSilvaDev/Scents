@@ -224,6 +224,8 @@ def register():
 
         return jsonify({'message': 'Usuário registrado com sucesso!'})
     except Exception as e:
+        print(f"Erro no registro: {str(e)}")
+        db.session.rollback()
         return jsonify({'message': f'Erro ao registrar: {str(e)}'}), 500
 
 @app.route('/upload')
