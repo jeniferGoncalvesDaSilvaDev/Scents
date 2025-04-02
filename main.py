@@ -21,9 +21,12 @@ if not os.path.exists(UPLOAD_FOLDER):
 # Verificar se o ffmpeg está instalado
 def check_ffmpeg_installed():
     try:
-        subprocess.run(['ffmpeg', '-version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except FileNotFoundError:
-        raise EnvironmentError("ffmpeg não está instalado no sistema.")
+        result = subprocess.run(['which', 'ffmpeg'], check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.returncode != 0:
+            raise EnvironmentError("ffmpeg não está instalado no sistema.")
+        print("FFmpeg encontrado no sistema")
+    except Exception as e:
+        raise EnvironmentError(f"Erro ao verificar ffmpeg: {str(e)}")
 
 check_ffmpeg_installed()  # Verifica se o ffmpeg está instalado
 
