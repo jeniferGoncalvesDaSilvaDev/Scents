@@ -148,10 +148,20 @@ def generate_video(current_user):
     if current_user.file_count >= 10:
         return jsonify({'message': 'Limite de arquivos atingido'}), 400
 
-    image_file = request.files['image']
-    aroma_choice = request.json['aroma']
-    mp3_filename = f"{aroma_choice}.mp3"
-    mp3_path = os.path.join(app.config['UPLOAD_FOLDER'], mp3_filename)
+    # Pegar o último arquivo de imagem e áudio enviados
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+
+    # Encontrar o último arquivo de imagem
+    image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    if not image_files:
+        return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
+
+    # Encontrar o último arquivo de áudio
+    audio_files = [f for f in files if f.lower().endswith('.mp3')]
+    if not audio_files:
+        return jsonify({'message': 'Nenhum áudio encontrado'}), 400
+    audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_files[-1])
 
     # Verificação de extensão de arquivo
     if not image_file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
@@ -249,55 +259,7 @@ def dashboard_page():
 def api_docs():
     return send_from_directory('.', 'api-docs.html')
 
-@app.route('/generate_video', methods=['POST'])
-def generate_video_endpoint():
-    auth_header = request.headers.get('Authorization')
-    if not auth_header or not auth_header.startswith('Bearer '):
-        return jsonify({'message': 'Token não fornecido'}), 401
 
-    token = auth_header.split(' ')[1]
-    try:
-        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        current_user = User.query.get(data['user_id'])
-
-        if not current_user:
-            return jsonify({'message': 'Usuário não encontrado'}), 401
-
-        # Pegar o último arquivo de imagem e áudio enviados
-        files = os.listdir(app.config['UPLOAD_FOLDER'])
-
-        # Encontrar o último arquivo de imagem
-        image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
-        if not image_files:
-            return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
-
-        # Encontrar o último arquivo de áudio
-        audio_files = [f for f in files if f.lower().endswith('.mp3')]
-        if not audio_files:
-            return jsonify({'message': 'Nenhum áudio encontrado'}), 400
-        audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_files[-1])
-
-        # Gerar nome único para o vídeo
-        output_filename = f"video_{uuid.uuid4().hex[:8]}.mp4"
-        output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
-
-        try:
-            generate_video_with_audio(image_path, audio_path, output_path)
-            new_file = GeneratedFile(filename=output_filename, user_id=current_user.id)
-            db.session.add(new_file)
-            db.session.commit()
-
-            return jsonify({
-                'message': 'Vídeo gerado com sucesso',
-                'video_url': f'/download/{output_filename}'
-            })
-        except Exception as e:
-            return jsonify({'message': f'Erro ao gerar vídeo: {str(e)}'}), 500
-    except jwt.ExpiredSignatureError:
-        return jsonify({'message': 'Token expirado'}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({'message': 'Token inválido'}), 401
 
 
 @app.route('/list-uploads', methods=['GET'])
