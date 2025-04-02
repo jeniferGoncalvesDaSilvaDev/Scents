@@ -145,51 +145,40 @@ def check_usage(current_user):
 @limiter.limit("5 per minute")
 @token_required
 def generate_video(current_user):
-    if current_user.file_count >= 10:
-        return jsonify({'message': 'Limite de arquivos atingido'}), 400
-
-    # Pegar o último arquivo de imagem e áudio enviados
-    files = os.listdir(app.config['UPLOAD_FOLDER'])
-
-    # Encontrar o último arquivo de imagem
-    image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
-    if not image_files:
-        return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
-
-    # Encontrar o último arquivo de áudio
-    audio_files = [f for f in files if f.lower().endswith('.mp3')]
-    if not audio_files:
-        return jsonify({'message': 'Nenhum áudio encontrado'}), 400
-    audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_files[-1])
-
-    # Verificação de extensão de arquivo
-    if not image_file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-        return jsonify({'message': 'Formato de arquivo inválido'}), 400
-
-    # Verificação se o arquivo de áudio existe
-    if not os.path.exists(mp3_path):
-        return jsonify({'message': f'O arquivo de áudio "{mp3_filename}" não foi encontrado.'}), 400
-
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
-    image_file.save(image_path)
-
-    output_filename = os.path.join(app.config['UPLOAD_FOLDER'], f'{current_user.id}_video.mp4')
-
     try:
-        generate_video_with_audio(image_path, mp3_path, output_filename)
+        if current_user.file_count >= 10:
+            return jsonify({'message': 'Limite de arquivos atingido'}), 400
+
+        files = os.listdir(app.config['UPLOAD_FOLDER'])
+        
+        image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+        if not image_files:
+            return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
+        
+        audio_files = [f for f in files if f.lower().endswith('.mp3')]
+        if not audio_files:
+            return jsonify({'message': 'Nenhum áudio encontrado'}), 400
+        
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
+        audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_files[-1])
+        
+        output_filename = f'video_{uuid.uuid4().hex[:8]}.mp4'
+        output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
+        
+        generate_video_with_audio(image_path, audio_path, output_path)
+        
+        current_user.file_count += 1
+        new_file = GeneratedFile(filename=output_filename, user_id=current_user.id)
+        db.session.add(new_file)
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Vídeo gerado com sucesso!',
+            'video_url': f'/download/{output_filename}'
+        })
+        
     except Exception as e:
         return jsonify({'message': f'Erro ao gerar o vídeo: {str(e)}'}), 500
-
-    current_user.file_count += 1
-    new_file = GeneratedFile(filename=output_filename, user_id=current_user.id)
-    db.session.add(new_file)
-    db.session.commit()
-
-    return jsonify({
-        'message': 'Arquivo gerado com sucesso!',
-        'video_file': output_filename
-    })
 
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
