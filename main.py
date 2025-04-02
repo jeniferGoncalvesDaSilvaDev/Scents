@@ -249,9 +249,9 @@ def generate_video_endpoint(current_user):
 
         # Encontrar o último arquivo de imagem
         image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
-    if not image_files:
-        return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
+        if not image_files:
+            return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
 
     # Encontrar o último arquivo de áudio
     audio_files = [f for f in files if f.lower().endswith('.mp3')]
