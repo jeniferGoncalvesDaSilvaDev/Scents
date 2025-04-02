@@ -41,13 +41,19 @@
             statusMessage.textContent = 'Gerando vídeo...';
             
             try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    statusMessage.textContent = 'Token não encontrado. Faça login novamente.';
+                    return;
+                }
+                
                 const response = await fetch('/generate_video', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({}) // Adiciona um corpo vazio para a requisição POST
+                    body: JSON.stringify({})
                 });
 
                 const result = await response.json();

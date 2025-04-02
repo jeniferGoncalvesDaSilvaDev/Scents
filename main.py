@@ -233,6 +233,8 @@ def api_docs():
 @app.route('/generate_video', methods=['POST'])
 @token_required
 def generate_video_endpoint(current_user):
+    if not current_user:
+        return jsonify({'message': 'Usuário não autorizado'}), 401
     # Pegar o último arquivo de imagem e áudio enviados
     files = os.listdir(app.config['UPLOAD_FOLDER'])
 
