@@ -79,23 +79,16 @@ def generate_video_with_audio(image_filename, mp3_filename, output_filename):
     subprocess.run(cmd)
 
 def generate_token(user_id):
-    # Gera um token aleatório como parte do payload
-    random_token = os.urandom(32).hex()
     payload = {
         'user_id': user_id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1),
-        'random': random_token
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
     }
-    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
-    return token
+    return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
 
 def decode_token(token):
     try:
-        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        return payload['user_id']
-    except jwt.ExpiredSignatureError:
-        return None
-    except jwt.InvalidTokenError:
+        return jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['user_id']
+    except:
         return None
 
 # Decorador para exigir autenticação

@@ -41,15 +41,12 @@
             statusMessage.textContent = 'Gerando vídeo...';
             
             try {
-                let token = localStorage.getItem('token');
+                const token = localStorage.getItem('token');
                 if (!token) {
                     window.location.href = '/login';
                     return;
                 }
-                
-                // Remover possíveis espaços em branco do token
-                token = token.trim();
-                
+
                 const response = await fetch('/generate_video', {
                     method: 'POST',
                     headers: {
