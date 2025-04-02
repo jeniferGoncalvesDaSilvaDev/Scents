@@ -247,8 +247,8 @@ def generate_video_endpoint(current_user):
         # Pegar o último arquivo de imagem e áudio enviados
         files = os.listdir(app.config['UPLOAD_FOLDER'])
 
-    # Encontrar o último arquivo de imagem
-    image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+        # Encontrar o último arquivo de imagem
+        image_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
     if not image_files:
         return jsonify({'message': 'Nenhuma imagem encontrada'}), 400
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_files[-1])
