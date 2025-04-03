@@ -76,7 +76,7 @@
                 downloadLink.href = result.video_url;
                 videoResult.style.display = 'block';
 
-                // Iniciar download automático
+                // Iniciar download automático e redirecionar
                 const link = document.createElement('a');
                 link.href = result.video_url;
                 link.download = 'video.mp4';
@@ -85,9 +85,7 @@
                 document.body.removeChild(link);
                 
                 statusMessage.textContent = 'Redirecionando para downloads...';
-                setTimeout(() => {
-                    window.location.replace('/downloads');
-                }, 2000);
+                window.location.href = '/download';
 
             } catch (error) {
                 statusMessage.textContent = 'Erro: ' + error.message;
