@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scents Ads - Download</title>
+    <title>Downloads</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Imagem com Áudio Embutido</h1>
+        <h1>Seus Downloads</h1>
         <div id="file-list"></div>
     </div>
 
@@ -29,27 +29,21 @@
 
             const fileList = document.getElementById('file-list');
             files.forEach(file => {
-                if (file.filename.startsWith('scents_')) {
-                    const div = document.createElement('div');
-                    div.style.margin = '20px 0';
-                    div.style.textAlign = 'center';
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.style.margin = '10px 0';
+                div.style.padding = '10px';
+                div.style.border = '1px solid #ddd';
+                div.style.borderRadius = '5px';
 
-                    const img = document.createElement('img');
-                    img.src = `/download/${file.filename}`;
-                    img.style.maxWidth = '100%';
-                    img.style.marginBottom = '20px';
-
-                    const link = document.createElement('a');
-                    link.href = `/download/${file.filename}`;
-                    link.className = 'main-button';
-                    link.style.display = 'inline-block';
-                    link.download = file.filename;
-                    link.textContent = 'Baixar Imagem com Áudio';
-
-                    div.appendChild(img);
-                    div.appendChild(link);
-                    fileList.appendChild(div);
-                }
+                const link = document.createElement('a');
+                link.href = `/download/${file.filename}`;
+                link.download = file.filename;
+                link.className = 'main-button';
+                link.textContent = `Baixar ${file.filename}`;
+                
+                div.appendChild(link);
+                fileList.appendChild(div);
             });
         }
 
