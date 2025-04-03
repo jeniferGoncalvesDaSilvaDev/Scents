@@ -67,6 +67,20 @@
                 const videoResult = document.getElementById('video-result');
                 const video = document.getElementById('generated-video');
                 const downloadLink = document.getElementById('download-link');
+
+                video.src = result.video_url;
+                downloadLink.href = result.video_url;
+                videoResult.style.display = 'block';
+
+                // Iniciar download automático
+                const downloadUrl = result.video_url;
+                const filename = downloadUrl.split('/').pop();
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);load-link');
                 
                 video.src = result.video_url;
                 downloadLink.href = result.video_url;
