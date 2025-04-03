@@ -244,6 +244,7 @@ def paste_token_page():
 def dashboard_page():
     return send_from_directory('.', 'dashboard.html')
 
+@app.route('/download')
 @app.route('/downloads')
 def downloads_page():
     return send_from_directory('.', 'download.html')
