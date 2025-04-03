@@ -62,7 +62,7 @@
                 }
 
                 const result = await response.json();
-                statusMessage.textContent = 'Vídeo gerado com sucesso!';
+                statusMessage.textContent = 'Vídeo gerado com sucesso! Iniciando download...';
                 
                 const videoResult = document.getElementById('video-result');
                 const video = document.getElementById('generated-video');
@@ -71,8 +71,14 @@
                 video.src = result.video_url;
                 downloadLink.href = result.video_url;
                 videoResult.style.display = 'block';
-                    const video = document.getElementById('generated-video');
-                    const downloadLink = document.getElementById('download-link');
+                
+                // Criar um link temporário para download automático
+                const tempLink = document.createElement('a');
+                tempLink.href = result.video_url;
+                tempLink.download = 'video.mp4';
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
                     
                     video.src = result.video_url;
                     downloadLink.href = result.video_url;
