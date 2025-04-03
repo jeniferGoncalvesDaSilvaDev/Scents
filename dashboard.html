@@ -85,9 +85,7 @@
                 document.body.removeChild(link);
 
                 // Redirecionar para a página de downloads
-                setTimeout(() => {
-                    window.location.href = '/downloads';
-                }, 1000);
+                window.location.href = '/downloads';
 
             } catch (error) {
                 statusMessage.textContent = 'Erro: ' + error.message;
