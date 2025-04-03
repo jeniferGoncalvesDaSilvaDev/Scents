@@ -29,10 +29,23 @@
     </div>
 
     <script>
-        const token = localStorage.getItem('token');
+        let token = localStorage.getItem('token');
         if (!token) {
             window.location.href = '/login';
+            return;
         }
+        
+        // Verificar se o token é válido
+        fetch('/check_usage', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            if (!response.ok) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        });
 
         document.getElementById('generate-video-btn').addEventListener('click', async () => {
             const statusMessage = document.getElementById('status-message');
