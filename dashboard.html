@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -20,7 +19,6 @@
             <p>O vídeo será gerado com os últimos arquivos enviados no upload</p>
             <button id="generate-video-btn" class="main-button">Gerar Vídeo</button>
             <div id="status-message"></div>
-            <div id="status-message"></div>
         </div>
 
         <div id="video-result" style="display: none;">
@@ -39,31 +37,24 @@
         document.getElementById('generate-video-btn').addEventListener('click', async () => {
             const statusMessage = document.getElementById('status-message');
             statusMessage.textContent = 'Gerando vídeo...';
-            
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    window.location.href = '/login';
-                    return;
-                }
 
+            try {
                 const response = await fetch('/generate_video', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
+                    }
                 });
 
+                const result = await response.json();
+
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Erro ao gerar vídeo');
+                    throw new Error(result.message || 'Erro ao gerar vídeo');
                 }
 
-                const result = await response.json();
                 statusMessage.textContent = 'Vídeo gerado com sucesso! Iniciando download...';
-                
+
                 const videoResult = document.getElementById('video-result');
                 const video = document.getElementById('generated-video');
                 const downloadLink = document.getElementById('download-link');
@@ -73,33 +64,13 @@
                 videoResult.style.display = 'block';
 
                 // Iniciar download automático
-                const downloadUrl = result.video_url;
-                const filename = downloadUrl.split('/').pop();
                 const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.download = filename;
+                link.href = result.video_url;
+                link.download = 'video.mp4';
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);load-link');
-                
-                video.src = result.video_url;
-                downloadLink.href = result.video_url;
-                videoResult.style.display = 'block';
-                
-                // Criar um link temporário para download automático
-                const tempLink = document.createElement('a');
-                tempLink.href = result.video_url;
-                tempLink.download = 'video.mp4';
-                document.body.appendChild(tempLink);
-                tempLink.click();
-                document.body.removeChild(tempLink);
-                    
-                    video.src = result.video_url;
-                    downloadLink.href = result.video_url;
-                    videoResult.style.display = 'block';
-                } else {
-                    throw new Error(result.message || 'Erro ao gerar vídeo');
-                }
+                document.body.removeChild(link);
+
             } catch (error) {
                 statusMessage.textContent = 'Erro: ' + error.message;
             }
