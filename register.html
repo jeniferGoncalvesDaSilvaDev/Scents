@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,163 +14,178 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }.container {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        width: 100%;
-    }
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
 
-    h2 {
-        text-align: center;
-    }
+        h2 {
+            text-align: center;
+        }
 
-    .plano {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        margin: 5px 0;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        text-align: left;
-        cursor: pointer;
-        background-color: white;
-    }
+        .plano {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            text-align: left;
+            cursor: pointer;
+            background-color: white;
+        }
 
-    .plano.selecionado {
-        border-color: blue;
-        background-color: #e0f0ff;
-    }
+        .plano.selecionado {
+            border-color: blue;
+            background-color: #e0f0ff;
+        }
 
-    .input-container {
-        margin-top: 10px;
-    }
+        .input-container {
+            margin-top: 10px;
+        }
 
-    input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-    .erro {
-        color: red;
-        font-size: 14px;
-        margin-top: 5px;
-    }
+        .erro {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
 
-    .botao {
-        width: 100%;
-        background-color: blue;
-        color: white;
-        padding: 10px;
-        margin-top: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        .botao {
+            width: 100%;
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .botao:hover {
-        background-color: darkblue;
-    }
-</style>
-
+        .botao:hover {
+            background-color: darkblue;
+        }
+    </style>
 </head>
-<body><div class="container">
-    <h2>Escolha seu plano</h2>
+<body>
+    <div class="container">
+        <h2>Escolha seu plano</h2>
 
-    <div id="planos"></div>
+        <div id="planos"></div>
 
-    <div id="formPagamento" style="display: none;">
-        <div class="input-container">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" placeholder="Digite seu nome">
+        <div id="formPagamento" style="display: none;">
+            <div class="input-container">
+                <label for="nomeUsuario">Nome de Usuário:</label>
+                <input type="text" id="nomeUsuario" placeholder="Digite seu nome de usuário">
+            </div>
+            <div class="input-container">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Digite seu email">
+            </div>
+            <div class="input-container">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" placeholder="Digite sua senha">
+            </div>
+            <div class="input-container">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" placeholder="Digite seu nome">
+            </div>
+            <div class="input-container">
+                <label for="sobrenome">Sobrenome:</label>
+                <input type="text" id="sobrenome" placeholder="Digite seu sobrenome">
+            </div>
+            <div class="input-container">
+                <label for="cnpj">CNPJ:</label>
+                <input type="text" id="cnpj" placeholder="Digite seu CNPJ">
+            </div>
+            <p id="erro" class="erro"></p>
+            <button class="botao" onclick="handlePagamento()">Pagar Agora</button>
         </div>
-        <div class="input-container">
-            <label for="sobrenome">Sobrenome:</label>
-            <input type="text" id="sobrenome" placeholder="Digite seu sobrenome">
-        </div>
-        <div class="input-container">
-            <label for="cnpj">CNPJ:</label>
-            <input type="text" id="cnpj" placeholder="Digite seu CNPJ">
-        </div>
-        <p id="erro" class="erro"></p>
-        <button class="botao" onclick="handlePagamento()">Pagar Agora</button>
     </div>
-</div>
 
-<script>
-    const planos = [
-        { nome: "Plano Experiência", preco: 2500, anuncios: 10, link: "https://www.asaas.com/c/cz6v5jokf25hefqa" },
-        { nome: "Plano Básico", preco: 5500, anuncios: 30, link: "https://www.asaas.com/c/pqvt4eey8kp3payi" },
-        { nome: "Plano MKT Profissional", preco: 9500, anuncios: 50, link: "https://www.asaas.com/c/lifkclg6htamx2yu" }
-    ];
+    <script>
+        const planos = [
+            { nome: "Plano Experiência", preco: 2500, anuncios: 10, link: "https://www.asaas.com/c/cz6v5jokf25hefqa" },
+            { nome: "Plano Básico", preco: 5500, anuncios: 30, link: "https://www.asaas.com/c/pqvt4eey8kp3payi" },
+            { nome: "Plano MKT Profissional", preco: 9500, anuncios: 50, link: "https://www.asaas.com/c/lifkclg6htamx2yu" }
+        ];
 
-    const cnaesBloqueados = ["6319400", "7319001", "7312702", "9001901", "9001902", "9001904"];
-    let planoSelecionado = null;
+        const cnaesBloqueados = ["6319400", "7319001", "7312702", "9001901", "9001902", "9001904"];
+        let planoSelecionado = null;
 
-    function carregarPlanos() {
-        const planosContainer = document.getElementById("planos");
-        planos.forEach((plano, index) => {
-            const btn = document.createElement("button");
-            btn.classList.add("plano");
-            btn.innerHTML = `<strong>${plano.nome}</strong> - R$ ${plano.preco.toLocaleString("pt-BR")} / mês <br> ${plano.anuncios} anúncios mensais`;
-            btn.onclick = () => selecionarPlano(index);
-            planosContainer.appendChild(btn);
-        });
-    }
-
-    function selecionarPlano(index) {
-        planoSelecionado = planos[index];
-        document.querySelectorAll(".plano").forEach((btn, i) => {
-            btn.classList.toggle("selecionado", i === index);
-        });
-        document.getElementById("formPagamento").style.display = "block";
-    }
-
-    function validarCNPJ(cnpj) {
-        return cnpj.replace(/\D/g, "").length === 14;
-    }
-
-    function consultarCNAEporCNPJ(cnpj) {
-        const cnpjLimpo = cnpj.replace(/\D/g, "");
-        const ultimosDigitos = parseInt(cnpjLimpo.slice(-4));
-        if (ultimosDigitos % 5 === 0) return "7319001"; // bloqueado
-        if (ultimosDigitos % 3 === 0) return "1052000"; // permitido
-        return "4637101"; // permitido
-    }
-
-    function handlePagamento() {
-        const nome = document.getElementById("nome").value.trim();
-        const sobrenome = document.getElementById("sobrenome").value.trim();
-        const cnpj = document.getElementById("cnpj").value.trim();
-        const erro = document.getElementById("erro");
-        erro.textContent = "";
-
-        if (!nome || !sobrenome) {
-            erro.textContent = "Por favor, preencha seu nome e sobrenome.";
-            return;
+        function carregarPlanos() {
+            const planosContainer = document.getElementById("planos");
+            planos.forEach((plano, index) => {
+                const btn = document.createElement("button");
+                btn.classList.add("plano");
+                btn.innerHTML = `<strong>${plano.nome}</strong> - R$ ${plano.preco.toLocaleString("pt-BR")} / mês <br> ${plano.anuncios} anúncios mensais`;
+                btn.onclick = () => selecionarPlano(index);
+                planosContainer.appendChild(btn);
+            });
         }
 
-        if (!validarCNPJ(cnpj)) {
-            erro.textContent = "CNPJ inválido. Verifique e tente novamente.";
-            return;
+        function selecionarPlano(index) {
+            planoSelecionado = planos[index];
+            document.querySelectorAll(".plano").forEach((btn, i) => {
+                btn.classList.toggle("selecionado", i === index);
+            });
+            document.getElementById("formPagamento").style.display = "block";
         }
 
-        const cnae = consultarCNAEporCNPJ(cnpj);
-        if (cnaesBloqueados.includes(cnae)) {
-            erro.textContent = "Este CNPJ pertence a uma atividade não autorizada para uso da tecnologia.";
-            return;
+        function validarCNPJ(cnpj) {
+            return cnpj.replace(/\D/g, "").length === 14;
         }
 
-        window.location.href = planoSelecionado.link;
-    }
+        function consultarCNAEporCNPJ(cnpj) {
+            const cnpjLimpo = cnpj.replace(/\D/g, "");
+            const ultimosDigitos = parseInt(cnpjLimpo.slice(-4));
+            if (ultimosDigitos % 5 === 0) return "7319001"; // bloqueado
+            if (ultimosDigitos % 3 === 0) return "1052000"; // permitido
+            return "4637101"; // permitido
+        }
 
-    carregarPlanos();
-</script>
+        function handlePagamento() {
+            const nomeUsuario = document.getElementById("nomeUsuario").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const senha = document.getElementById("senha").value.trim();
+            const nome = document.getElementById("nome").value.trim();
+            const sobrenome = document.getElementById("sobrenome").value.trim();
+            const cnpj = document.getElementById("cnpj").value.trim();
+            const erro = document.getElementById("erro");
+            erro.textContent = "";
 
+            if (!nomeUsuario || !email || !senha || !nome || !sobrenome) {
+                erro.textContent = "Por favor, preencha todos os campos obrigatórios.";
+                return;
+            }
+
+            if (!validarCNPJ(cnpj)) {
+                erro.textContent = "CNPJ inválido. Verifique e tente novamente.";
+                return;
+            }
+
+            const cnae = consultarCNAEporCNPJ(cnpj);
+            if (cnaesBloqueados.includes(cnae)) {
+                erro.textContent = "Este CNPJ pertence a uma atividade não autorizada para uso da tecnologia.";
+                return;
+            }
+
+            window.location.href = planoSelecionado.link;
+        }
+
+        carregarPlanos();
+    </script>
 </body>
 </html>
