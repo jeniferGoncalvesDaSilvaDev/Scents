@@ -21,11 +21,32 @@
 
     <script>
         const token = localStorage.getItem('token');
+
+        // Se o token não existir, redireciona para login
         if (!token) {
             window.location.href = '/login';
         }
 
-        document.getElementById('token-display').value = token;
+        // Valida se o token está em formato JWT e não expirado
+        try {
+            const payloadBase64 = token.split('.')[1];
+            const payload = JSON.parse(atob(payloadBase64));
+
+            const currentTime = Math.floor(Date.now() / 1000); // segundos
+            if (payload.exp && payload.exp < currentTime) {
+                alert('Sessão expirada. Faça login novamente.');
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+
+            // Exibe o token no campo
+            document.getElementById('token-display').value = token;
+
+        } catch (err) {
+            alert('Token inválido. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
 
         function copyToken() {
             const tokenInput = document.getElementById('token-display');

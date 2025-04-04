@@ -37,15 +37,22 @@
         
         // Verificar se o token é válido
         fetch('/check_usage', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => {
-            if (!response.ok) {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
-            }
+    headers: {
+        'Authorization': `Bearer ${token}`
+    }
+}).then(response => {
+    if (!response.ok) {
+        return response.json().then(data => {
+            console.error('Erro no check_usage:', data.message);
+            localStorage.removeItem('token');
+            window.location.href = '/login';
         });
+    }
+}).catch(error => {
+    console.error('Erro na requisição check_usage:', error);
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+});
 
         document.getElementById('generate-video-btn').addEventListener('click', async () => {
             const statusMessage = document.getElementById('status-message');

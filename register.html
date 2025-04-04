@@ -1,62 +1,175 @@
-
-<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - Scents Ads</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>Planos de Pagamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }.container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    .plano {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        text-align: left;
+        cursor: pointer;
+        background-color: white;
+    }
+
+    .plano.selecionado {
+        border-color: blue;
+        background-color: #e0f0ff;
+    }
+
+    .input-container {
+        margin-top: 10px;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .erro {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .botao {
+        width: 100%;
+        background-color: blue;
+        color: white;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .botao:hover {
+        background-color: darkblue;
+    }
+</style>
+
 </head>
-<body>
-    <div class="container">
-        <h1>Scents Ads</h1>
-        <form id="register-form">
-            <h2>Registro</h2>
-            <input type="text" id="nome" placeholder="Nome" required>
-            <input type="text" id="sobrenome" placeholder="Sobrenome" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="text" id="cpf_cnpj" placeholder="CPF/CNPJ" required>
-            <input type="text" id="username" placeholder="Usuário" required>
-            <input type="password" id="password" placeholder="Senha" required>
-            <button type="submit">Registrar</button>
-        </form>
-        <p>Já tem uma conta? <a href="/login">Faça login</a></p>
+<body><div class="container">
+    <h2>Escolha seu plano</h2>
+
+    <div id="planos"></div>
+
+    <div id="formPagamento" style="display: none;">
+        <div class="input-container">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" placeholder="Digite seu nome">
+        </div>
+        <div class="input-container">
+            <label for="sobrenome">Sobrenome:</label>
+            <input type="text" id="sobrenome" placeholder="Digite seu sobrenome">
+        </div>
+        <div class="input-container">
+            <label for="cnpj">CNPJ:</label>
+            <input type="text" id="cnpj" placeholder="Digite seu CNPJ">
+        </div>
+        <p id="erro" class="erro"></p>
+        <button class="botao" onclick="handlePagamento()">Pagar Agora</button>
     </div>
+</div>
 
-    <script>
-        const registerForm = document.getElementById('register-form');
-        registerForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const formData = {
-                nome: document.getElementById('nome').value,
-                sobrenome: document.getElementById('sobrenome').value,
-                email: document.getElementById('email').value,
-                cpf_cnpj: document.getElementById('cpf_cnpj').value,
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value
-            };
+<script>
+    const planos = [
+        { nome: "Plano Experiência", preco: 2500, anuncios: 10, link: "https://www.asaas.com/c/cz6v5jokf25hefqa" },
+        { nome: "Plano Básico", preco: 5500, anuncios: 30, link: "https://www.asaas.com/c/pqvt4eey8kp3payi" },
+        { nome: "Plano MKT Profissional", preco: 9500, anuncios: 50, link: "https://www.asaas.com/c/lifkclg6htamx2yu" }
+    ];
 
-            try {
-                const response = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+    const cnaesBloqueados = ["6319400", "7319001", "7312702", "9001901", "9001902", "9001904"];
+    let planoSelecionado = null;
 
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert('Registro realizado com sucesso!');
-                    window.location.href = '/login';
-                } else {
-                    alert('Erro: ' + data.message);
-                }
-            } catch (error) {
-                alert('Erro ao registrar: ' + error);
-            }
+    function carregarPlanos() {
+        const planosContainer = document.getElementById("planos");
+        planos.forEach((plano, index) => {
+            const btn = document.createElement("button");
+            btn.classList.add("plano");
+            btn.innerHTML = `<strong>${plano.nome}</strong> - R$ ${plano.preco.toLocaleString("pt-BR")} / mês <br> ${plano.anuncios} anúncios mensais`;
+            btn.onclick = () => selecionarPlano(index);
+            planosContainer.appendChild(btn);
         });
-    </script>
+    }
+
+    function selecionarPlano(index) {
+        planoSelecionado = planos[index];
+        document.querySelectorAll(".plano").forEach((btn, i) => {
+            btn.classList.toggle("selecionado", i === index);
+        });
+        document.getElementById("formPagamento").style.display = "block";
+    }
+
+    function validarCNPJ(cnpj) {
+        return cnpj.replace(/\D/g, "").length === 14;
+    }
+
+    function consultarCNAEporCNPJ(cnpj) {
+        const cnpjLimpo = cnpj.replace(/\D/g, "");
+        const ultimosDigitos = parseInt(cnpjLimpo.slice(-4));
+        if (ultimosDigitos % 5 === 0) return "7319001"; // bloqueado
+        if (ultimosDigitos % 3 === 0) return "1052000"; // permitido
+        return "4637101"; // permitido
+    }
+
+    function handlePagamento() {
+        const nome = document.getElementById("nome").value.trim();
+        const sobrenome = document.getElementById("sobrenome").value.trim();
+        const cnpj = document.getElementById("cnpj").value.trim();
+        const erro = document.getElementById("erro");
+        erro.textContent = "";
+
+        if (!nome || !sobrenome) {
+            erro.textContent = "Por favor, preencha seu nome e sobrenome.";
+            return;
+        }
+
+        if (!validarCNPJ(cnpj)) {
+            erro.textContent = "CNPJ inválido. Verifique e tente novamente.";
+            return;
+        }
+
+        const cnae = consultarCNAEporCNPJ(cnpj);
+        if (cnaesBloqueados.includes(cnae)) {
+            erro.textContent = "Este CNPJ pertence a uma atividade não autorizada para uso da tecnologia.";
+            return;
+        }
+
+        window.location.href = planoSelecionado.link;
+    }
+
+    carregarPlanos();
+</script>
+
 </body>
 </html>
